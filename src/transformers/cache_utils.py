@@ -98,7 +98,9 @@ class Cache:
         else:
             return None
 
-    def get_mask_size_and_pattern(self, cache_position: torch.Tensor, num_layers: int) -> tuple[list[tuple], list[int]]:
+    def get_mask_size_and_pattern(
+        self, cache_position: torch.Tensor, num_layers: int
+    ) -> tuple[list[tuple], list[int]]:
         """
         Return a list of tuples (kv_offset, kv_length, sliding_window, chunk_size), corresponding to all unique mask pattern we may need,
         as well as a mapping of indices from the pattern to each layers in the cache.
@@ -1316,7 +1318,9 @@ class StaticCache(Cache):
             self.key_cache[layer_idx].zero_()
             self.value_cache[layer_idx].zero_()
 
-    def get_mask_size_and_pattern(self, cache_position: torch.Tensor, num_layers: int) -> tuple[list[tuple], list[int]]:
+    def get_mask_size_and_pattern(
+        self, cache_position: torch.Tensor, num_layers: int
+    ) -> tuple[list[tuple], list[int]]:
         """
         Return a list of tuples (kv_offset, kv_length, sliding_window, chunk_size), corresponding to all unique mask pattern we may need,
         as well as a mapping of indices from the pattern to each layers in the cache.
@@ -1471,7 +1475,9 @@ class SlidingWindowCache(StaticCache):
             self.key_cache[layer_idx].zero_()
             self.value_cache[layer_idx].zero_()
 
-    def get_mask_size_and_pattern(self, cache_position: torch.Tensor, num_layers: int) -> tuple[list[tuple], list[int]]:
+    def get_mask_size_and_pattern(
+        self, cache_position: torch.Tensor, num_layers: int
+    ) -> tuple[list[tuple], list[int]]:
         """
         Return a list of tuples (kv_offset, kv_length, sliding_window, chunk_size), corresponding to all unique mask pattern we may need,
         as well as a mapping of indices from the pattern to each layers in the cache.
@@ -1737,7 +1743,7 @@ class HybridCache(Cache):
 
         layer_switch = config.sliding_window_pattern if hasattr(config, "sliding_window_pattern") else 2  # 2 is for BC
         self.is_sliding = [bool((i + 1) % layer_switch) for i in range(config.num_hidden_layers)]
-        
+
         self.key_cache: List[torch.Tensor] = []
         self.value_cache: List[torch.Tensor] = []
         global_cache_shape = (self.max_batch_size, self.num_key_value_heads, max_cache_len, self.head_dim)
@@ -1860,7 +1866,9 @@ class HybridCache(Cache):
             self.key_cache[layer_idx].zero_()
             self.value_cache[layer_idx].zero_()
 
-    def get_mask_size_and_pattern(self, cache_position: torch.Tensor, num_layers: int) -> tuple[list[tuple], list[int]]:
+    def get_mask_size_and_pattern(
+        self, cache_position: torch.Tensor, num_layers: int
+    ) -> tuple[list[tuple], list[int]]:
         """
         Return a list of tuples (kv_offset, kv_length, sliding_window, chunk_size), corresponding to all unique mask pattern we may need,
         as well as a mapping of indices from the pattern to each layers in the cache.
@@ -2081,7 +2089,9 @@ class HybridChunkedCache(Cache):
             self.value_cache[layer_idx].zero_()
         self.cumulative_length = [0 for _ in range(len(self.cumulative_length))]
 
-    def get_mask_size_and_pattern(self, cache_position: torch.Tensor, num_layers: int) -> tuple[list[tuple], list[int]]:
+    def get_mask_size_and_pattern(
+        self, cache_position: torch.Tensor, num_layers: int
+    ) -> tuple[list[tuple], list[int]]:
         """
         Return a list of tuples (kv_offset, kv_length, sliding_window, chunk_size), corresponding to all unique mask pattern we may need,
         as well as a mapping of indices from the pattern to each layers in the cache.
@@ -2105,7 +2115,7 @@ class HybridChunkedCache(Cache):
 
         full_mask_kv_offset = 0
         full_mask_kv_length = self.get_max_cache_shape()
-    
+
         sizes_and_patterns = [(full_mask_kv_offset, full_mask_kv_length, None, None)]
         layer_mapping = [0] * len(self.is_sliding)
         # Only in this case, do we need to add another mask with chunked pattern
