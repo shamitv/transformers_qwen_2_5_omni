@@ -105,7 +105,18 @@ class Cache:
         Return a list of tuples (kv_length, kv_offset, sliding_window, chunk_size), corresponding to all unique mask pattern we may need,
         as well as a mapping of indices from the pattern to each layers in the cache.
         The masks are then prepared according to the given lengths (kv_length, kv_offset) and patterns (sliding_window, chunk_size), and
-        mapped back to the corresponding layers to be easily indexed in the modleing code (in case of different patterns par layers).
+        mapped back to the corresponding layers to be easily indexed in the modeling code (in case of different patterns par layers).
+
+        For example, most Cache will return a single pattern that will be mapped to all layers, but Hybrid caches must return several
+        patterns (i.e. a different one for "full" and "sliding" layers), along with the corresponding layer mapping.
+
+        Example:
+
+        With 2 layers, this function would return:
+
+        ```python
+        >>> past_key_values.get_mask_sizes_and_patterns(cache_position, 2)
+        >>> [(kv_length, 0, None, None)], [0, 0]
         """
         query_length = cache_position.shape[0]
         past_seen_tokens = self.get_seq_length()
@@ -1325,7 +1336,18 @@ class StaticCache(Cache):
         Return a list of tuples (kv_length, kv_offset, sliding_window, chunk_size), corresponding to all unique mask pattern we may need,
         as well as a mapping of indices from the pattern to each layers in the cache.
         The masks are then prepared according to the given lengths (kv_length, kv_offset) and patterns (sliding_window, chunk_size), and
-        mapped back to the corresponding layers to be easily indexed in the modleing code (in case of different patterns par layers).
+        mapped back to the corresponding layers to be easily indexed in the modeling code (in case of different patterns par layers).
+
+        For example, most Cache will return a single pattern that will be mapped to all layers, but Hybrid caches must return several
+        patterns (i.e. a different one for "full" and "sliding" layers), along with the corresponding layer mapping.
+
+        Example:
+
+        With 2 layers, this function would return:
+
+        ```python
+        >>> past_key_values.get_mask_sizes_and_patterns(cache_position, 2)
+        >>> [(static_cache_length, 0, None, None)], [0, 0]
         """
         kv_length = self.get_max_cache_shape()
         return [(kv_length, 0, None, None)], [0] * num_layers
@@ -1482,7 +1504,18 @@ class SlidingWindowCache(StaticCache):
         Return a list of tuples (kv_length, kv_offset, sliding_window, chunk_size), corresponding to all unique mask pattern we may need,
         as well as a mapping of indices from the pattern to each layers in the cache.
         The masks are then prepared according to the given lengths (kv_length, kv_offset) and patterns (sliding_window, chunk_size), and
-        mapped back to the corresponding layers to be easily indexed in the modleing code (in case of different patterns par layers).
+        mapped back to the corresponding layers to be easily indexed in the modeling code (in case of different patterns par layers).
+
+        For example, most Cache will return a single pattern that will be mapped to all layers, but Hybrid caches must return several
+        patterns (i.e. a different one for "full" and "sliding" layers), along with the corresponding layer mapping.
+
+        Example:
+
+        With 2 layers, this function would return:
+
+        ```python
+        >>> past_key_values.get_mask_sizes_and_patterns(cache_position, 2)
+        >>> [(kv_length, kv_offset, sliding_window, None)], [0, 0]
         """
         query_length = cache_position.shape[0]
         first_cache_position = cache_position[0]
@@ -1872,7 +1905,18 @@ class HybridCache(Cache):
         Return a list of tuples (kv_length, kv_offset, sliding_window, chunk_size), corresponding to all unique mask pattern we may need,
         as well as a mapping of indices from the pattern to each layers in the cache.
         The masks are then prepared according to the given lengths (kv_length, kv_offset) and patterns (sliding_window, chunk_size), and
-        mapped back to the corresponding layers to be easily indexed in the modleing code (in case of different patterns par layers).
+        mapped back to the corresponding layers to be easily indexed in the modeling code (in case of different patterns par layers).
+
+        For example, most Cache will return a single pattern that will be mapped to all layers, but Hybrid caches must return several
+        patterns (i.e. a different one for "full" and "sliding" layers), along with the corresponding layer mapping.
+
+        Example:
+
+        With 2 layers (first one full, second one sliding), this function would return:
+
+        ```python
+        >>> past_key_values.get_mask_sizes_and_patterns(cache_position, 2)
+        >>> [(max_cache_length, 0, None, None), (local_kv_size, kv_offset, sliding_window, None)], [0, 1]
         """
         query_length = cache_position.shape[0]
         first_cache_position = cache_position[0]
@@ -2095,7 +2139,18 @@ class HybridChunkedCache(Cache):
         Return a list of tuples (kv_length, kv_offset, sliding_window, chunk_size), corresponding to all unique mask pattern we may need,
         as well as a mapping of indices from the pattern to each layers in the cache.
         The masks are then prepared according to the given lengths (kv_length, kv_offset) and patterns (sliding_window, chunk_size), and
-        mapped back to the corresponding layers to be easily indexed in the modleing code (in case of different patterns par layers).
+        mapped back to the corresponding layers to be easily indexed in the modeling code (in case of different patterns par layers).
+
+        For example, most Cache will return a single pattern that will be mapped to all layers, but Hybrid caches must return several
+        patterns (i.e. a different one for "full" and "sliding" layers), along with the corresponding layer mapping.
+
+        Example:
+
+        With 2 layers (first one full, second one sliding), this function would return:
+
+        ```python
+        >>> past_key_values.get_mask_sizes_and_patterns(cache_position, 2)
+        >>> [(max_cache_length, 0, None, None), (local_kv_size, kv_offset, None, chunk_size)], [0, 1]
         """
         query_length = cache_position.shape[0]
         first_cache_position = cache_position[0]
