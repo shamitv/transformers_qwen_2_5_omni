@@ -1759,7 +1759,11 @@ class HybridCache(Cache):
             config.num_attention_heads if config.num_key_value_heads is None else config.num_key_value_heads
         )
 
-        self.is_sliding = [bool((i + 1) % config.sliding_window_pattern) for i in range(config.num_hidden_layers)]
+        layer_patterns = getattr(config, "layer_attention_patterns", None)
+        if layer_patterns is not None:
+            self.is_sliding = [layer_type == "sliding" for layer_type in layer_patterns]
+        else:
+            self.is_sliding = [bool((i + 1) % config.sliding_window_pattern) for i in range(config.num_hidden_layers)]
 
         self.key_cache: List[torch.Tensor] = []
         self.value_cache: List[torch.Tensor] = []
