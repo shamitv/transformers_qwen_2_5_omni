@@ -24,7 +24,7 @@ FILES_TO_FIND = [
     "kernels/falcon_mamba/selective_scan_with_ln_interface.py",
     "kernels/falcon_mamba/__init__.py",
     "kernels/__init__.py",
-    "models/graphormer/algos_graphormer.pyx",
+    # "models/graphormer/algos_graphormer.pyx",
 ]
 
 
