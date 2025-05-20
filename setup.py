@@ -450,11 +450,11 @@ install_requires = [
 ]
 
 setup(
-    name="transformers",
-    version="4.52.0.qwenomni.dev0",  # expected format is one of x.y.z.dev0, or x.y.z.rc1 or x.y.z (no to dashes, yes to dots)
+    name="transformers-qwenomni",
+    version="4.52.0.dev0+qwenomni",  # expected format is one of x.y.z.dev0, or x.y.z.rc1 or x.y.z (no to dashes, yes to dots)
     author="The Hugging Face team (past and future) with the help of all our contributors (https://github.com/huggingface/transformers/graphs/contributors)",
-    author_email="transformers@huggingface.co",
-    description="State-of-the-art Machine Learning for JAX, PyTorch and TensorFlow",
+    author_email="oss@shamit.in",
+    description="Transformers: With code for Qwen 2.5 Omni",
     long_description=open("README.md", "r", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     keywords="NLP vision speech deep learning transformer pytorch tensorflow jax BERT GPT-2 Wav2Vec2 ViT",
